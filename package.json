@@ -1,0 +1,15 @@
+{
+  "name": "charity-fund",
+  "version": "1.0.0",
+  "description": "\"charity funding decentralized app\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "\"ritik kumar\"",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.3"
+  }
+}
