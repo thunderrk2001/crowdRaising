@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0 <0.9.0;
+contract FundFactory{
+    address[] public funds;
+    function createFund(address _manager,string  memory _fundName,string memory _desc,uint  _minAmount,uint _minTime) public{
+      funds.push(address(new Fund(_manager,_fundName,_desc,_minAmount,_minTime)));
+
+    }
+    function getFundsDetails() public view returns(address [] memory){
+        return funds;
+    }
+}
 contract Fund{
     address  public manager;
     string public fundName;
@@ -70,17 +80,20 @@ contract Fund{
         require(idx>=0 && idx<requests.length,"index out of bound for request mapping");
         require(requests[idx].voteCount>=approversCount/2,"NOT majority");
         require(requests[idx].isCompleted==false,"Request Finalised cannot do any tarnsaction");
+        require(requests[idx].requestedAmount<=address(this).balance,"Insufuucent balance in fund");
         requests[idx].receiverAddress.transfer(requests[idx].requestedAmount);
         requests[idx].isCompleted=true;
     }
     function withdrawMyCont(uint amount) public  payable{
         require(amount>0);
-        require(block.timestamp<=lastTimeStamp,"Last withdrawing time had passed cannot do  any transaction");
+        require(block.timestamp<=lastTimeStamp,"Last withdrawing time had passed cannot do any transaction");
         require(approvers[msg.sender]>=amount,"Your contributed Balance has less amount than demanded");
         approvers[msg.sender]=approvers[msg.sender]-amount;
         if(approvers[msg.sender]==0)
         approversCount--;
     }
-
+    function getDetails() public view returns(string memory,string memory,uint,uint){
+return(fundName,desc,minAmount,lastTimeStamp);
+    }
 
 }
