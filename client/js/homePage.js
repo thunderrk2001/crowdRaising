@@ -18,7 +18,24 @@
             }, false)
         })
 })()
-window.onload = async() => {
+window.onload = async() => { connect3() }
+document.getElementById("myAccount").addEventListener("click", async() => {
+    connect3();
+});
+async function connect3() {
+    if (typeof web3 === 'undefined')
+        alert("Install meta Mask to use")
+    else {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+
+        if (Array(accounts).length > 0) {
+            document.getElementById("myAccount").innerText = accounts[0];
+        } else
+            alert("Account not connected")
+
+    }
+}
+async function getConnectedAccount() {
     if (typeof web3 === 'undefined')
         console.log("Not connected")
     else {

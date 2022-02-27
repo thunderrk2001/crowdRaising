@@ -1,21 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0 <0.9.0;
-contract FundFactory{
-    address[] public funds;
-    function createFund(address _manager,string  memory _fundName,string memory _desc,uint  _minAmount,uint _minTime) public{
-      funds.push(address(new Fund(_manager,_fundName,_desc,_minAmount,_minTime)));
-
-    }
-    function getFundsDetails() public view returns(address [] memory){
-        return funds;
-    }
-}
+pragma solidity >=0.4.22 <0.9.0;
 contract Fund{
     address  public manager;
     string public fundName;
     string public desc;
     uint public minAmount;
-    uint public lastTimeStamp;
     uint public approversCount=0;
     mapping(address=>uint) public approvers;
 
@@ -31,16 +20,16 @@ contract Fund{
     }
 
     request[] public requests;
-    constructor(address _manager,string  memory _fundName,string memory _desc,uint  _minAmount,uint _minTime)
+
+    constructor(address _manager,string  memory _fundName,string memory _desc,uint  _minAmount)
     {
         require(bytes(_fundName).length>2 ,"Fund Name should have proper title");
         require(_minAmount>0 ,"Minimum amount of eth shoud greater than 0");
-        require(_minTime>=3600 ,"Min time should greater than or equal to 3600 seconds");
         manager=_manager;
         fundName=_fundName;
         desc=_desc;
         minAmount=_minAmount;
-        lastTimeStamp=block.timestamp+_minTime;
+
     }
     function donate() public payable
     {   require(msg.value>=minAmount,"Donatation less than minAmount is not accepted");
@@ -84,16 +73,9 @@ contract Fund{
         requests[idx].receiverAddress.transfer(requests[idx].requestedAmount);
         requests[idx].isCompleted=true;
     }
-    function withdrawMyCont(uint amount) public  payable{
-        require(amount>0);
-        require(block.timestamp<=lastTimeStamp,"Last withdrawing time had passed cannot do any transaction");
-        require(approvers[msg.sender]>=amount,"Your contributed Balance has less amount than demanded");
-        approvers[msg.sender]=approvers[msg.sender]-amount;
-        if(approvers[msg.sender]==0)
-        approversCount--;
-    }
-    function getDetails() public view returns(string memory,string memory,uint,uint){
-return(fundName,desc,minAmount,lastTimeStamp);
+
+    function getDetails() public view returns(string memory,string memory,address ,uint){
+        return(fundName,desc,manager,minAmount);
     }
 
 }
