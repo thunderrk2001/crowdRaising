@@ -45,7 +45,7 @@ async function getConnectedAccount() {
 }
 setTimeout(async() => { callF() }, 3000)
 async function callF() {
-    var contractAbi = `[
+    var contractAbi = ` [
     {
       "inputs": [
         {
@@ -68,11 +68,6 @@ async function callF() {
     },
     {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "_manager",
-          "type": "address"
-        },
         {
           "internalType": "string",
           "name": "_fundName",
@@ -112,10 +107,10 @@ async function callF() {
     const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
     const contract = new web_3.eth.Contract(JSON.parse(contractAbi), "0xcE9716aAA5B7Ccff304A3Eb1d7fFEb228233b785", {
         from: '0x464Ff25A4A6bB9E00F2D4B0E3454c1Db83788375',
-        gasPrice: '20000000000'
     });
     console.log(contract.methods)
     try {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         const res = await contract.methods.createFund("first", "hello", 2).send({ from: '0x464Ff25A4A6bB9E00F2D4B0E3454c1Db83788375' });
         console.log(res);
     } catch (e) {
