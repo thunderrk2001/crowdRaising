@@ -43,7 +43,9 @@ async function getConnectedAccount() {
         console.log(accounts)
     }
 }
-setTimeout(async() => { callF() }, 3000)
+document.getElementById("just").addEventListener("click", async() => {
+    await callF();
+})
 async function callF() {
     var contractAbi = ` [
     {
@@ -86,8 +88,9 @@ async function callF() {
       ],
       "name": "createFund",
       "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+      "stateMutability": "payable",
+      "type": "function",
+      "payable": true
     },
     {
       "inputs": [],
@@ -105,16 +108,17 @@ async function callF() {
     }
   ]` //here put your contract abi in json string
     const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
-    const contract = new web_3.eth.Contract(JSON.parse(contractAbi), "0xcE9716aAA5B7Ccff304A3Eb1d7fFEb228233b785", {
+    const contract = new web_3.eth.Contract(JSON.parse(contractAbi), "0xbec4Aa563bfFb921E1DfEE25F5DD846D4Fd462F8", {
         from: '0x464Ff25A4A6bB9E00F2D4B0E3454c1Db83788375',
+        gas: 2000000,
     });
-    console.log(contract.methods)
+    //Was getting error because of *npm i -g  solc* solidity compiler  was not installed
     try {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        const res = await contract.methods.createFund("first", "hello", 2).send({ from: '0x464Ff25A4A6bB9E00F2D4B0E3454c1Db83788375' });
+        const res = await contract.methods.createFund("thunder", "ioii", 1).send({ from: accounts[0] })
         console.log(res);
     } catch (e) {
-        console.log(e)
+        console.error(e)
     }
 
 }
