@@ -1,98 +1,4 @@
-  (function() {
-      'use strict'
-      var forms = document.querySelectorAll('.needs-validation')
-
-      Array.prototype.slice.call(forms)
-          .forEach(function(form) {
-              form.addEventListener('submit', async function(event) {
-                  if (!form.checkValidity()) {
-                      event.preventDefault()
-                      event.stopPropagation()
-                  } else {
-                      event.preventDefault()
-                      const name = document.getElementById("fundName").value
-
-                      const desc = document.getElementById('fundDesc').value
-
-                      const minAmount = document.getElementById("minAmount").value
-
-                      const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
-                      const fundFactoryContarctInstance = getContractInstance(fundFactoryContractAbi, contractAddress)
-                      try {
-                          await fundFactoryContarctInstance.methods.createFund(name, desc, minAmount).send({ from: accounts[0] })
-                          window.location = "/"
-                      } catch (e) {
-                          alert(e)
-
-                      }
-                  }
-                  form.classList.add('was-validated')
-              }, false)
-          })
-  })()
-  let accounts = null;
-  const contractAddress = "0x5741B643F702374256915b80C04B5D3d0C7d18Af"
-  const fundFactoryContractAbi = `[
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "funds",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_fundName",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_desc",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_minAmount",
-          "type": "uint256"
-        }
-      ],
-      "name": "createFund",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function",
-      "payable": true
-    },
-    {
-      "inputs": [],
-      "name": "getFundsDetails",
-      "outputs": [
-        {
-          "internalType": "address[]",
-          "name": "",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    }
-  ]`
-  const fundContarctAbi = `[
+const fundContractAbi = `[
     {
       "inputs": [
         {
@@ -355,72 +261,59 @@
       "type": "function"
     }
   ]`
-  window.onload = async() => {
-      await connect3();
-      displayFundsWithDetail();
-  }
-  document.getElementById("myAccount").addEventListener("click", async() => {
-      connect3();
+window.onload = async() => {
+    const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
+    await connect3();
+    const contractAddress = document.getElementById("container").getAttribute("data-address")
 
-  });
+    const fundContarctInstance = getContractInstance(fundContractAbi, contractAddress)
 
-  function getContractInstance(abi, address) {
-      const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
-      const contract = new web_3.eth.Contract(JSON.parse(abi), address, {
-          from: accounts[0],
-          gas: 2000000,
-      });
-      return contract;
-  }
-  async function displayFundsWithDetail() {
-      const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
-      const fundFactoryContarctInstance = getContractInstance(fundFactoryContractAbi, contractAddress)
-      const res = await fundFactoryContarctInstance.methods.getFundsDetails().call()
+    const res = await fundContarctInstance.methods.getDetails().call()
 
-      let fundsDetails = [];
+    console.log(res);
 
-      for (let i = 0; i < res.length; i++) {
-          const fundAddress = res[i];
-          const contarctInstance = getContractInstance(fundContarctAbi, fundAddress);
-          const fundDetails = await contarctInstance.methods.getDetails().call();
-          await fundsDetails.push([fundDetails, res[i]]);
+    console.log(accounts[0])
+        /* try {
+        await fundContarctInstance.methods.donate().send({
+            from: accounts[0],
+            value: 0
+        });
+    } catch (err) {
+        console.log(err)
 
-      }
+    }
+*/
 
-      fundsDetails.forEach((info) => {
-          console.log(info)
-          let element = document.createElement('div');
-          element.innerHTML = ` <div class=" p-5 rounded mb-3 sD"  >
 
-            <h5 style="color:white;text-shadow: 0px 0px 4px #5e5857;">${info[0][0]}</h5>
-            <p class="lead" style="color: #3f4856;font-size: 16px; font-weight:600;">${info[0][1]}</p>
-            <a class="btn btn-lg btn-primary" href="/fund/${info[1]}" role="button" style="background-color: #385277;overflow: hidden;
-            width: 190px;
 
-            height: 40px;font-size: 15px;">View Community »</a>
-        </div>
-        `
-          document.getElementById('container').appendChild(element);
-      })
+}
 
-  }
-  async function connect3() {
-      if (typeof web3 === 'undefined')
-          alert("Install meta Mask to use")
-      else {
-          accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-          if (Array(accounts).length > 0) {
-              document.getElementById("myAccount").innerText = accounts[0];
-          } else
-              alert("Account not connected")
+function getContractInstance(abi, address) {
+    const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
+    const contract = new web_3.eth.Contract(JSON.parse(abi), address, {
+        from: accounts[0],
+        gas: 2000000,
+    });
+    return contract;
+}
+var accounts = null
+async function connect3() {
+    if (typeof web3 === 'undefined')
+        alert("Install meta Mask to use")
+    else {
+        accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        if (Array(accounts).length > 0) {
+            document.getElementById("myAccount").innerText = accounts[0];
+        } else
+            alert("Account not connected")
 
-      }
-  }
-  async function getConnectedAccount() {
-      if (typeof web3 === 'undefined')
-          console.log("Not connected")
-      else {
-          const accounts = await ethereum.request({ method: 'eth_accounts' });
-          console.log(accounts)
-      }
-  }
+    }
+}
+async function getConnectedAccount() {
+    if (typeof web3 === 'undefined')
+        console.log("Not connected")
+    else {
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        console.log(accounts)
+    }
+}

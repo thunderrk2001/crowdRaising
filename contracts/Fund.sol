@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+//
 pragma solidity >=0.4.22 <0.9.0;
 contract Fund{
     address  public manager;
@@ -13,10 +13,8 @@ contract Fund{
         string requestDesc;
         uint requestedAmount;
         address payable receiverAddress;
-        uint voteCount;
         bool isCompleted;
-        mapping(address=>uint) voters;
-
+        uint balance;
     }
 
     request[] public requests;
@@ -54,28 +52,43 @@ contract Fund{
         newRequest.requestDesc=_requestDesc;
         newRequest.requestedAmount=_requestedAmount;
         newRequest.receiverAddress=payable(_receiverAddress);
-        newRequest.voteCount=0;
+        newRequest.balance=0;
         newRequest.isCompleted=false;
     }
+
     function voteRequest(uint idx) public payable
     {
         require(idx>=0 && idx<requests.length,"index out of bound for request mapping");
-        require(requests[idx].voters[msg.sender]==0,"You already voted");
-        requests[idx].voters[msg.sender]=1;
-        requests[idx].voteCount++;
+        require(requests[idx].isCompleted==false,"Request Finalised already");
+        require(requests[idx].balance<requests[idx].requestedAmount,"Request has gathered requested amount");
+        require(approvers[msg.sender]>0,"You dont have enough voting power.Obtain voting power by raising fund");
+
+        if(approvers[msg.sender]>requests[idx].requestedAmount-requests[idx].balance)
+        {
+            uint tmp=approvers[msg.sender]+requests[idx].balance;
+            tmp=tmp-requests[idx].requestedAmount;
+            approvers[msg.sender]=tmp;
+            requests[idx].balance=requests[idx].requestedAmount;
+
+        }
+        else
+        {
+            requests[idx].balance=requests[idx].balance+approvers[msg.sender];
+            approvers[msg.sender]=0;
+        }
 
     }
     function finaliseAndSend(uint idx) public isManager payable{
         require(idx>=0 && idx<requests.length,"index out of bound for request mapping");
-        require(requests[idx].voteCount>=approversCount/2,"NOT majority");
         require(requests[idx].isCompleted==false,"Request Finalised cannot do any tarnsaction");
         require(requests[idx].requestedAmount<=address(this).balance,"Insufuucent balance in fund");
+        require(requests[idx].balance==requests[idx].requestedAmount,"Not majority or target not achieved");
         requests[idx].receiverAddress.transfer(requests[idx].requestedAmount);
         requests[idx].isCompleted=true;
     }
 
-    function getDetails() public view returns(string memory,string memory,address ,uint){
-        return(fundName,desc,manager,minAmount);
+    function getDetails() public view returns(string memory,string memory,address ,uint,uint){
+        return(fundName,desc,manager,address(this).balance,minAmount);
     }
 
 }
