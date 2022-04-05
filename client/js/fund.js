@@ -1,291 +1,29 @@
-const fundContractAbi = `[
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_manager",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "_fundName",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_desc",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_minAmount",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "approvers",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "approversCount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "desc",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "fundName",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "manager",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "minAmount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "requests",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "requestName",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "requestDesc",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "requestedAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address payable",
-          "name": "receiverAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "isCompleted",
-          "type": "bool"
-        },
-        {
-          "internalType": "uint256",
-          "name": "balance",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "donate",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getBalance",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_requestName",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_requestDesc",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_requestedAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_receiverAddress",
-          "type": "address"
-        }
-      ],
-      "name": "createRequest",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "idx",
-          "type": "uint256"
-        }
-      ],
-      "name": "voteRequest",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "idx",
-          "type": "uint256"
-        }
-      ],
-      "name": "finaliseAndSend",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getDetails",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ]`
 window.onload = async() => {
     const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
     await connect3();
-    const contractAddress = document.getElementById("container").getAttribute("data-address")
+    const fundContractAddress = document.getElementById("container").getAttribute("data-address")
 
-    const fundContarctInstance = getContractInstance(fundContractAbi, contractAddress)
+    const fundContarctInstance = getContractInstance(fundContractAbi, fundContractAddress)
 
     const res = await fundContarctInstance.methods.getDetails().call()
+    const myContribution = await fundContarctInstance.methods.total(accounts[0]).call();
+    displayDetails(res, myContribution)
 
-    console.log(res);
 
-    console.log(accounts[0])
-        /* try {
-        await fundContarctInstance.methods.donate().send({
-            from: accounts[0],
-            value: 0
-        });
-    } catch (err) {
-        console.log(err)
-
-    }
-*/
+    /*
+     */
 
 
 
+}
+
+function displayDetails(details, myContribution) {
+    document.getElementById("title").innerText = details[0]
+    document.getElementById("description").innerText = details[1]
+    document.getElementById("manager_address").innerText = details[2]
+    document.getElementById("raised_amount").innerText = web_3.utils.fromWei(details[3], "ether")
+    document.getElementById("minimum_contribution").innerText = web_3.utils.fromWei(details[4], "ether")
+    document.getElementById("myContribution").innerText = web_3.utils.fromWei(myContribution, "ether")
 }
 
 function getContractInstance(abi, address) {
@@ -296,6 +34,24 @@ function getContractInstance(abi, address) {
     });
     return contract;
 }
+document.getElementById("donate").addEventListener("click", async() => {
+
+    const fundContractAddress = document.getElementById("container").getAttribute("data-address")
+    const fundContarctInstance = getContractInstance(fundContractAbi, fundContractAddress)
+    const amount = web_3.utils.toWei(document.getElementById("inputAmount").value, "ether");
+    const res = await fundContarctInstance.methods.getDetails().call()
+    try {
+        await fundContarctInstance.methods.donate().send({
+            from: accounts[0],
+            value: amount
+        });
+
+    } catch (err) {
+        console.log(err)
+        alert(err)
+
+    }
+})
 var accounts = null
 async function connect3() {
     if (typeof web3 === 'undefined')

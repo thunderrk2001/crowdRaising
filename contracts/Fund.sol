@@ -1,4 +1,3 @@
-//
 pragma solidity >=0.4.22 <0.9.0;
 contract Fund{
     address  public manager;
@@ -7,7 +6,7 @@ contract Fund{
     uint public minAmount;
     uint public approversCount=0;
     mapping(address=>uint) public approvers;
-
+    mapping(address=>uint) public total;
     struct request{
         string requestName;
         string requestDesc;
@@ -15,6 +14,8 @@ contract Fund{
         address payable receiverAddress;
         bool isCompleted;
         uint balance;
+
+
     }
 
     request[] public requests;
@@ -34,6 +35,7 @@ contract Fund{
         if(approvers[msg.sender]==0)
         approversCount=approversCount+1;
         approvers[msg.sender]=approvers[msg.sender]+msg.value;
+        total[msg.sender]=total[msg.sender]+msg.value;
     }
     function getBalance() public view returns(uint)
     {
