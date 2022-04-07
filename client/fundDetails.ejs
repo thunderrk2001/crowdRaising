@@ -8,6 +8,37 @@
     <title>fund :
         <%=address %>
     </title>
+    <style>
+        #message {
+            width: 70%;
+            display: none;
+            position: relative;
+            padding: 2px;
+            max-height: 200px;
+            border: 1px solid rgb(238, 211, 215);
+            background-color: rgb(242, 222, 222);
+            justify-content: center;
+            margin: auto;
+            margin-bottom: 10px;
+        }
+        
+        #close {
+            transition: all 0.24s linear;
+            position: absolute;
+            right: -2%;
+            top: 0px;
+            border-radius: 4px;
+            font-weight: bold;
+            padding: 1.75px;
+            cursor: pointer;
+            height: 100%;
+        }
+        
+        #messageText {
+            display: block;
+            height: auto
+        }
+    </style>
 </head>
 
 <body>
@@ -31,7 +62,13 @@
 
         </header>
     </div>
-    <div style="display: flex;margin: 20px; justify-content: end;">
+
+    <div id="message">
+        <div id="messageText">Here comes error not money money money ...</div>
+        <button type="button" id="close" class="btn-close" aria-label="Close"></button>
+    </div>
+
+    <div style="display: flex;margin: 0px; justify-content: end;">
         <div style="display: flex; flex-flow: row; margin-right: 20px;">
             <input type="number" id="inputAmount" step="0.000000000000000001" name="ether" id="amount">
             <button id="donate" style="color:white;background-color: #385277;">Donate(ETH)</button>
@@ -54,6 +91,18 @@
       aria-controls="ex1-tabs-2"
       aria-selected="false"
       >All Requests</a
+    >
+  </li>
+  <li class="nav-item" role="presentation">
+    <a
+      class="nav-link"
+      id="ex1-tab-3"
+      data-mdb-toggle="tab"
+      href="#ex1-tabs-3"
+      role="tab"
+      aria-controls="ex1-tabs-3"
+      aria-selected="false"
+      >Create Request</a
     >
   </li>
 </ul>
@@ -121,7 +170,9 @@
   <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
     Tab 2 content
   </div>
-
+<div class="tab-pane fade" id="ex1-tabs-3" role="tabpanel" aria-labelledby="ex1-tab-3">
+    Tab 3 content
+  </div>
 </div>
 </div>
 
