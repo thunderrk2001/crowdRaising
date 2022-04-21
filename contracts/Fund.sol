@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 contract Fund{
     address  public manager;
@@ -14,8 +15,6 @@ contract Fund{
         address payable receiverAddress;
         bool isCompleted;
         uint balance;
-
-
     }
 
     request[] public requests;
@@ -47,15 +46,11 @@ contract Fund{
     }
     function createRequest(string memory _requestName,string memory _requestDesc,uint _requestedAmount,
     address _receiverAddress
-    ) public isManager {
-        require(_requestedAmount<=address(this).balance);
-        request storage newRequest=requests.push();
-        newRequest.requestName=_requestName;
-        newRequest.requestDesc=_requestDesc;
-        newRequest.requestedAmount=_requestedAmount;
-        newRequest.receiverAddress=payable(_receiverAddress);
-        newRequest.balance=0;
-        newRequest.isCompleted=false;
+    ) public isManager payable
+      {  require(_requestedAmount<=address(this).balance);
+
+        requests.push(request(_requestName,_requestDesc,_requestedAmount,payable(_receiverAddress),false,0));
+
     }
 
     function voteRequest(uint idx) public payable
@@ -92,5 +87,12 @@ contract Fund{
     function getDetails() public view returns(string memory,string memory,address ,uint,uint){
         return(fundName,desc,manager,address(this).balance,minAmount);
     }
-
+    function getRequestsSize() public view returns(uint)
+    {
+        return (requests.length);
+    }
+    function getRequests(uint idx) public view returns(string memory,string memory,uint,address,bool,uint)
+    {
+        return(requests[idx].requestName,requests[idx].requestDesc,requests[idx].requestedAmount,requests[idx].receiverAddress,requests[idx].isCompleted,requests[idx].balance);
+    }
 }
