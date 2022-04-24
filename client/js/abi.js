@@ -1,4 +1,4 @@
- const contractAddress = "0xbE8aC17Da5b0a04ACd954cFA0b38CF361eDf21C9"
+ const contractAddress = "0xa86Fe0acf3E204Ab1b177189aEc9c7Bf5f151706"
  const fundFactoryContractAbi = `[
     {
       "inputs": [
@@ -17,8 +17,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -41,8 +40,7 @@
       "name": "createFund",
       "outputs": [],
       "stateMutability": "payable",
-      "type": "function",
-      "payable": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -55,8 +53,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     }
   ]`
  const fundContractAbi = `[
@@ -278,7 +275,7 @@
       ],
       "name": "createRequest",
       "outputs": [],
-      "stateMutability": "payable",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -291,7 +288,7 @@
       ],
       "name": "voteRequest",
       "outputs": [],
-      "stateMutability": "payable",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -325,6 +322,11 @@
           "internalType": "address",
           "name": "",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         },
         {
           "internalType": "uint256",

@@ -12,24 +12,56 @@ window.onload = async() => {
 
         document.getElementById("ex1-tab-3").style.display = 'none'
     }
+
     await getRequests()
+    const t = await fundInstance.getContributionBalance()
+    if (t == 0) {
+        document.getElementById("votingStatus").innerText = "DOWN"
+    } else {
+        document.getElementById("votingStatus").innerText = "UP"
+
+    }
 
     /*
      */
 
 
 
-}
 
+}
+var fundInstance = (function main() {
+    function instance() {
+
+    }
+    instance.prototype.getManagerStatus = async() => {
+        const fundContractAddress = document.getElementById("container").getAttribute("data-address")
+        const fundContarctInstance = getContractInstance(fundContractAbi, fundContractAddress)
+        const res = await fundContarctInstance.methods.getDetails().call()
+        if (accounts[0] == res[2]) {
+            return true
+        } else {
+            return false
+        }
+    }
+    instance.prototype.getContributionBalance = async() => {
+        const fundContractAddress = document.getElementById("container").getAttribute("data-address")
+        const fundContarctInstance = getContractInstance(fundContractAbi, fundContractAddress)
+        const res = await fundContarctInstance.methods.approvers(accounts[0]).call()
+        return web_3.utils.fromWei(res, "ether")
+    }
+    return new instance()
+})()
 
 function displayDetails(details, myContribution) {
 
     document.getElementById("title").innerText = details[0]
     document.getElementById("description").innerText = details[1]
     document.getElementById("manager_address").innerText = details[2]
-    document.getElementById("raised_amount").innerText = web_3.utils.fromWei(details[3], "ether")
+    document.getElementById("balance").innerText = web_3.utils.fromWei(details[3], "ether")
     document.getElementById("minimum_contribution").innerText = web_3.utils.fromWei(details[4], "ether")
+    document.getElementById("raised_amount").innerText = web_3.utils.fromWei(details[5], "ether")
     document.getElementById("myContribution").innerText = web_3.utils.fromWei(myContribution, "ether")
+
 
 }
 
@@ -52,12 +84,8 @@ document.getElementById("donate").addEventListener("click", async() => {
             from: accounts[0],
             value: amount
         });
-        document.getElementById("message").style.background = 'rgb(223, 240, 216)';
-        document.getElementById('message').style.border = '1 px solid rgb(214, 233, 198)';
-        document.querySelector('#messageText').innerText = 'Success'
-        document.getElementById("message").style.display = "flex";
-        window.location.reload();
 
+        showSuccess()
     } catch (err) {
         showErrorAlert(err)
 
@@ -111,8 +139,14 @@ async function createRequest(name, desc, minAmount, recAddress) {
     const fundContractAddress = document.getElementById("container").getAttribute("data-address")
     const fundContarctInstance = getContractInstance(fundContractAbi, fundContractAddress)
     const amount = web_3.utils.toWei(minAmount, "ether");
-    const a = await fundContarctInstance.methods.createRequest(name, desc, amount, recAddress).send({ from: accounts[0] })
-    console.log(a)
+    try {
+        const a = await fundContarctInstance.methods.createRequest(name, desc, amount, recAddress).send({ from: accounts[0] })
+        console.log(a)
+        showSuccess()
+    } catch (e) {
+        showErrorAlert(e)
+
+    }
 
 }
 
@@ -122,8 +156,25 @@ function showErrorAlert(err) {
     document.querySelector('#messageText').innerText = err
     document.getElementById("message").style.display = "flex";
 }
+
+function showSuccess() {
+    document.getElementById("message").style.background = 'rgb(223, 240, 216)';
+    document.getElementById('message').style.border = '1 px solid rgb(214, 233, 198)';
+    document.querySelector('#messageText').innerText = 'Success'
+    document.getElementById("message").style.display = "flex";
+    setTimeout(() => { window.location.reload(); }, 1000)
+
+}
+
 async function getRequests() {
     const status = { true: "Finalised", false: "Open" }
+    let isManager = await fundInstance.getManagerStatus()
+    if (isManager) {
+        isManager = "block"
+    } else {
+        isManager = "none"
+    }
+    console.log(isManager)
     const size = await requestsSize()
     for (let i = 0; i < size; i++) {
 
@@ -155,7 +206,7 @@ async function getRequests() {
 <div class="btn-group" style="width:100%">
                 <button type="button" class="btn btn-success" onclick="voteRequest(${i})"  style="margin-bottom: 5px ;width: 65px; height: 35px;"  >VOTE</button></div>
                 <div class="btn-group" style="width:100%">
-                <button type="button" class="btn btn-primary" onclick="finaliseRequest(${i})"   style="width: 65px; height: 35px;"  >Finalise
+                <button type="button" class="btn btn-primary" onclick="finaliseRequest(${i})"   style="width: 65px; height: 35px;display:${isManager}"  >Finalise
                 </button></div>
             </div>
             </div>
@@ -183,13 +234,24 @@ async function requestsSize() {
 async function voteRequest(idx) {
     const fundContractAddress = document.getElementById("container").getAttribute("data-address")
     const fundContarctInstance = getContractInstance(fundContractAbi, fundContractAddress)
-    const res = await fundContarctInstance.methods.voteRequest(idx).send({ from: accounts[0] })
-    console.log(res)
+    try {
+        const res = await fundContarctInstance.methods.voteRequest(idx).send({ from: accounts[0] })
+        showSuccess()
+    } catch (e) {
+        showErrorAlert(e)
+    }
+
 
 }
 async function finaliseRequest(idx) {
     const fundContractAddress = document.getElementById("container").getAttribute("data-address")
     const fundContarctInstance = getContractInstance(fundContractAbi, fundContractAddress)
-    const res = await fundContarctInstance.methods.finaliseAndSend(idx).send({ from: accounts[0] })
-    console.log(res)
+    try {
+        const res = await fundContarctInstance.methods.finaliseAndSend(idx).send({ from: accounts[0] })
+        showSuccess()
+
+    } catch (e) {
+        showErrorAlert(e)
+    }
+
 }

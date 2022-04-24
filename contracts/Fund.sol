@@ -8,6 +8,7 @@ contract Fund{
     uint public approversCount=0;
     mapping(address=>uint) public approvers;
     mapping(address=>uint) public total;
+    uint totalRaisedAmount;
     struct request{
         string requestName;
         string requestDesc;
@@ -35,6 +36,7 @@ contract Fund{
         approversCount=approversCount+1;
         approvers[msg.sender]=approvers[msg.sender]+msg.value;
         total[msg.sender]=total[msg.sender]+msg.value;
+        totalRaisedAmount=totalRaisedAmount+msg.value;
     }
     function getBalance() public view returns(uint)
     {
@@ -46,14 +48,14 @@ contract Fund{
     }
     function createRequest(string memory _requestName,string memory _requestDesc,uint _requestedAmount,
     address _receiverAddress
-    ) public isManager payable
+    ) public isManager
       {  require(_requestedAmount<=address(this).balance);
 
         requests.push(request(_requestName,_requestDesc,_requestedAmount,payable(_receiverAddress),false,0));
 
     }
 
-    function voteRequest(uint idx) public payable
+    function voteRequest(uint idx) public
     {
         require(idx>=0 && idx<requests.length,"index out of bound for request mapping");
         require(requests[idx].isCompleted==false,"Request Finalised already");
@@ -78,14 +80,14 @@ contract Fund{
     function finaliseAndSend(uint idx) public isManager payable{
         require(idx>=0 && idx<requests.length,"index out of bound for request mapping");
         require(requests[idx].isCompleted==false,"Request Finalised cannot do any tarnsaction");
-        require(requests[idx].requestedAmount<=address(this).balance,"Insufuucent balance in fund");
+        require(requests[idx].requestedAmount<=address(this).balance,"insufficient balance in fund");
         require(requests[idx].balance==requests[idx].requestedAmount,"Not majority or target not achieved");
         requests[idx].receiverAddress.transfer(requests[idx].requestedAmount);
         requests[idx].isCompleted=true;
     }
 
-    function getDetails() public view returns(string memory,string memory,address ,uint,uint){
-        return(fundName,desc,manager,address(this).balance,minAmount);
+    function getDetails() public view returns(string memory,string memory,address ,uint,uint,uint){
+        return(fundName,desc,manager,address(this).balance,minAmount,totalRaisedAmount);
     }
     function getRequestsSize() public view returns(uint)
     {
