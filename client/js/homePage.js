@@ -33,8 +33,8 @@
           })
   })()
   let accounts = null;
-
   window.onload = async() => {
+
       await connect3();
       displayFundsWithDetail();
   }

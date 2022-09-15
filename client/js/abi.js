@@ -400,4 +400,4 @@
       "type": "function"
     }
   ]`
- const web_3 = new window.Web3("HTTP://127.0.0.1:7545");
+ const web_3 = new Web3("HTTP://127.0.0.1:7545");
