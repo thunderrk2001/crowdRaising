@@ -17,9 +17,11 @@
 <img src="https://github.com/thunderrk2001/crowdRaising/blob/main/Doc/Screenshots/CreateFund.png"><img>
 
 **Fund Page (User view)**
+
 <img src="https://github.com/thunderrk2001/crowdRaising/blob/main/Doc/Screenshots/Donate.png"></img>
 
 **Fund Page (Fund creator view)** 
+
 <img src="https://github.com/thunderrk2001/crowdRaising/blob/main/Doc/Screenshots/FinaliseRequest.png"></img>
 
 
