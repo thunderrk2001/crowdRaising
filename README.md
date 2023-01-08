@@ -25,18 +25,18 @@
 
 ### Local Setup:
 - Clone this repo `git clone https://github.com/thunderrk2001/crowdRaising`.
-- Go to root of this project in cmd and run `npm install` *(Make sure **Node.js** is installed on your machine)*.
+- Go to the root of this project in cmd and run `npm install` *(Make sure **Node.js** is installed on your machine)*.
 - In cmd install **truffle** `npm i -g truffle`. 
 - Install **Ganache** on Your machine.
-- Create new project in ganache setup port,host and current project truffle-config.js file by importing project in ganache.
-- Add Same port and host in truffle-config file as added in ganche project.
-- Run `truffle migrate --reset` at root project level in cmd or in shell.
-- Open ganache project and in see in contarct tab where contract is deplyed.
+- Create a new project in ganache setup port, host, and current project truffle-config.js file by importing the project in ganache.
+- Add the Same port and host in the `truffle-config`file as added in the ganache project.
+- Run `truffle migrate --reset` at root project level in cmd or in the shell.
+- Open the ganache project and in see in the contract tab where the contract is deployed.
 - Pick deployed contract address and update *const contarctAddress* with picked address in`./client/js/abi.js` file.
-- Connect or import opened ganache project addresses to browser by meta mask wallet.
+- Connect or import opened ganache project addresses to the browser by meta mask wallet.
 - In shell or cmd run `node index.js`.
 
-Now you are ready to run your project.
+Now you are ready to see app running at 2000 port in browser.
 
 
 
